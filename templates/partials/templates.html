@@ -14,9 +14,11 @@
                     </button>
                 </div>
 
-                <p
+                <textarea
                     id="template-body-{{.ID}}"
-                    class="mt-2 whitespace-pre-wrap break-words text-sm leading-6 text-[#4b5563]">{{.Body}}</p>
+                    readonly
+                    class="mt-2 block min-h-40 w-full resize-y border border-[#cfe6d7] bg-white px-3 py-2 font-mono text-sm leading-6 text-[#111827] outline-none"
+                >{{.Body}}</textarea>
             </article>
         {{end}}
     </div>
