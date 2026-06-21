@@ -1,0 +1,8 @@
+vector.db
+podmanager.db
+data
+.git
+.gitignore
+Dockerfile
+compose.yaml
+*.log

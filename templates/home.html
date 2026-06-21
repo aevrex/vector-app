@@ -1,0 +1,48 @@
+{{define "content"}}
+<main class="mt-5 space-y-5">
+    <section class="border border-[#d8eadf] bg-white p-6 shadow-sm">
+        <p class="text-xs font-bold uppercase tracking-[0.22em] text-[#00a651]">Aussie Broadband workspace</p>
+        <h2 class="mt-2 text-3xl font-semibold tracking-tight text-[#111827]">Welcome to {{.Title}}</h2>
+        <p class="mt-2 text-sm text-[#4b5563]">Select a department, group, and set to load templates.</p>
+    </section>
+
+    <section class="border border-[#d8eadf] bg-white p-6 shadow-sm">
+        <div>
+            <h2 class="text-base font-semibold text-[#111827]">Selection controls</h2>
+            <p class="mt-1 text-sm text-[#4b5563]">Choose your template path</p>
+        </div>
+
+        <div class="mt-6 grid gap-4 md:grid-cols-3">
+        <div>
+            <label for="department" class="mb-1 block text-sm font-semibold text-[#374151]">Department</label>
+            <select
+                id="department"
+                name="department"
+                class="block h-10 w-full border border-[#cfe6d7] bg-[#fbfefc] px-3 text-sm text-[#111827] shadow-xs outline-none focus:border-[#00a651] focus:ring-2 focus:ring-[#b7edc9]"
+                hx-get="/groups"
+                hx-target="#group-container"
+                hx-trigger="change">
+                <option value="">Choose a department</option>
+                {{range .Departments}}
+                    <option value="{{.}}">{{.}}</option>
+                {{end}}
+            </select>
+        </div>
+
+        <div id="group-container"></div>
+        <div id="set-container"></div>
+        </div>
+    </section>
+
+    <section class="border border-[#d8eadf] bg-white p-6 shadow-sm">
+        <div>
+            <h2 class="text-base font-semibold text-[#111827]">Template results</h2>
+            <p class="mt-1 text-sm text-[#4b5563]">Retrieved templates will appear here</p>
+        </div>
+
+        <div class="mt-5">
+        <div id="templates-container"></div>
+        </div>
+    </section>
+</main>
+{{end}}

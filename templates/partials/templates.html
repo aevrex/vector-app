@@ -1,0 +1,14 @@
+{{define "templates.html"}}
+{{if .Templates}}
+    <div class="space-y-3">
+        {{range .Templates}}
+            <article class="border border-[#d8eadf] bg-[#fbfefc] p-4 shadow-xs">
+                <h3 class="text-sm font-bold text-[#111827]">{{.Title}}</h3>
+                <p class="mt-2 text-sm leading-6 text-[#4b5563]">{{.Body}}</p>
+            </article>
+        {{end}}
+    </div>
+{{else}}
+    <p class="border border-dashed border-[#cfe6d7] bg-[#fbfefc] p-4 text-sm text-[#4b5563]">No templates found.</p>
+{{end}}
+{{end}}

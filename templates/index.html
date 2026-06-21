@@ -1,0 +1,41 @@
+{{define "index"}}
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+	<script src="https://cdn.jsdelivr.net/npm/htmx.org@2.0.4/dist/htmx.min.js"></script>
+
+	<title>Vector</title>
+</head>
+<body class="min-h-screen bg-[#f4fbf6] text-[#111827] antialiased">
+	<div class="mx-auto max-w-6xl px-4 py-6 sm:px-6 lg:px-8">
+		<header class="border border-[#d8eadf] bg-white p-5 shadow-sm">
+			<div class="flex flex-col gap-5 md:flex-row md:items-start md:justify-between">
+				<div>
+					<div class="flex items-center gap-3">
+						<div class="grid h-10 w-10 place-items-center bg-[#00a651] text-lg font-black text-white">V</div>
+						<div>
+							<p class="text-xs font-bold uppercase tracking-[0.28em] text-[#00a651]">Vector</p>
+							<h1 class="mt-1 text-2xl font-semibold text-[#111827]">Dashboard</h1>
+						</div>
+					</div>
+				</div>
+				<nav aria-label="Primary navigation" class="grid gap-2 sm:grid-cols-2 md:w-[28rem]">
+					<a href="/" class="border border-[#d8eadf] bg-[#f8fdf9] px-4 py-3 text-sm font-semibold text-[#111827] shadow-xs hover:border-[#00a651] hover:bg-[#eaf8ef]">
+						Overview
+					</a>
+					<a href="/new" class="border border-[#d8eadf] bg-[#f8fdf9] px-4 py-3 text-sm font-semibold text-[#111827] shadow-xs hover:border-[#00a651] hover:bg-[#eaf8ef]">
+						Add Template
+					</a>
+				</nav>
+			</div>
+			<div class="mt-5 h-2 bg-gradient-to-r from-[#00a651] via-[#8cc63f] to-[#ffd200]"></div>
+		</header>
+
+		{{template "content" .}}
+	</div>
+</body>
+</html>
+{{end}}
