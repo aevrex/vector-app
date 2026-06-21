@@ -3,8 +3,20 @@
     <div class="space-y-3">
         {{range .Templates}}
             <article class="border border-[#d8eadf] bg-[#fbfefc] p-4 shadow-xs">
-                <h3 class="text-sm font-bold text-[#111827]">{{.Title}}</h3>
-                <p class="mt-2 text-sm leading-6 text-[#4b5563]">{{.Body}}</p>
+                <div class="flex items-start justify-between gap-4">
+                    <h3 class="text-sm font-bold text-[#111827]">{{.Title}}</h3>
+
+                    <button
+                        type="button"
+                        class="bg-[#00a651] px-3 py-2 text-xs font-bold text-white shadow-sm hover:bg-[#008a45]"
+                        onclick="navigator.clipboard.writeText(document.getElementById('template-body-{{.ID}}').innerText)">
+                        Copy
+                    </button>
+                </div>
+
+                <p
+                    id="template-body-{{.ID}}"
+                    class="mt-2 whitespace-pre-wrap break-words text-sm leading-6 text-[#4b5563]">{{.Body}}</p>
             </article>
         {{end}}
     </div>
