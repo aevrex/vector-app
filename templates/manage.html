@@ -1,0 +1,137 @@
+{{define "content"}}
+<main class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+    <section class="rounded-lg bg-[#13322b] p-6 text-[#fafaf8] shadow-lg shadow-[#13322b]/15">
+        <div class="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+            <div>
+                <p class="text-sm font-bold text-[#97d700]">Template operations</p>
+                <h1 class="mt-2 text-3xl font-black leading-tight sm:text-4xl">{{.Title}}</h1>
+                <p class="mt-3 max-w-3xl text-base text-[#e6fcd4]">Create and maintain the reusable content that powers Vector today and the knowledge hub it can become next.</p>
+            </div>
+            <a href="/" class="inline-flex h-11 items-center justify-center rounded-md bg-[#fde021] px-4 text-sm font-black text-[#13322b] no-underline shadow-sm transition hover:bg-[#fffed3] focus:outline-none focus:ring-2 focus:ring-[#97d700] focus:ring-offset-2 focus:ring-offset-[#13322b]">
+                Browse Library
+            </a>
+        </div>
+    </section>
+
+    {{if .Saved}}
+        <p class="mt-5 rounded-md border border-[#97d700] bg-[#e6fcd4] p-3 text-sm font-bold text-[#014f13] shadow-sm">Template saved.</p>
+    {{end}}
+
+    {{if .Deleted}}
+        <p class="mt-5 rounded-md border border-[#97d700] bg-[#e6fcd4] p-3 text-sm font-bold text-[#014f13] shadow-sm">Template deleted.</p>
+    {{end}}
+
+    {{if .Error}}
+        <p class="mt-5 rounded-md border border-[#fde021] bg-[#fffed3] p-3 text-sm font-bold text-[#574202] shadow-sm">{{.Error}}</p>
+    {{end}}
+
+    <div class="mt-6 grid gap-6 xl:grid-cols-[minmax(0,0.95fr)_minmax(0,1.05fr)]">
+        <form method="POST" action="/templates" class="rounded-lg border border-[#c7c5bc] bg-[#fafaf8] p-5 shadow-sm">
+            <div>
+                <h2 class="text-lg font-black text-[#13322b]">Create Template</h2>
+                <p class="mt-1 text-sm font-medium text-[#575652]">Department, group, set, title, and body</p>
+            </div>
+
+            <div class="mt-5 grid gap-4 lg:grid-cols-3 xl:grid-cols-1 2xl:grid-cols-3">
+                <div>
+                    <label for="department" class="mb-1 block text-sm font-bold text-[#31312e]">Department</label>
+                    <select
+                        id="department"
+                        name="department"
+                        class="block h-11 w-full rounded-md border border-[#c7c5bc] bg-white px-3 text-sm font-medium text-[#1c1c1a] shadow-sm outline-none focus:border-[#007a33] focus:ring-2 focus:ring-[#97d700]"
+                        hx-get="/manage/groups"
+                        hx-target="#new-group-container"
+                        hx-trigger="change">
+                        <option value="">Choose a department</option>
+                        {{range .Departments}}
+                            <option value="{{.}}" {{if eq $.Values.Department .}}selected{{end}}>{{.}}</option>
+                        {{end}}
+                    </select>
+                    <input
+                        type="text"
+                        name="department_new"
+                        value="{{.Values.NewDepartment}}"
+                        class="mt-2 block h-11 w-full rounded-md border border-[#c7c5bc] bg-white px-3 text-sm font-medium text-[#1c1c1a] shadow-sm outline-none placeholder:text-[#828078] focus:border-[#007a33] focus:ring-2 focus:ring-[#97d700]"
+                        placeholder="Or type a new department">
+                </div>
+
+                <div id="new-group-container">
+                    <label for="group" class="mb-1 block text-sm font-bold text-[#31312e]">Group</label>
+                    <select id="group" name="group" class="block h-11 w-full rounded-md border border-[#c7c5bc] bg-white px-3 text-sm font-medium text-[#1c1c1a] shadow-sm outline-none focus:border-[#007a33] focus:ring-2 focus:ring-[#97d700]">
+                        <option value="">Choose a group</option>
+                    </select>
+                    <input
+                        type="text"
+                        name="group_new"
+                        value="{{.Values.NewGroup}}"
+                        class="mt-2 block h-11 w-full rounded-md border border-[#c7c5bc] bg-white px-3 text-sm font-medium text-[#1c1c1a] shadow-sm outline-none placeholder:text-[#828078] focus:border-[#007a33] focus:ring-2 focus:ring-[#97d700]"
+                        placeholder="Or type a new group">
+                </div>
+
+                <div id="new-set-container">
+                    <label for="set" class="mb-1 block text-sm font-bold text-[#31312e]">Set</label>
+                    <select id="set" name="set" class="block h-11 w-full rounded-md border border-[#c7c5bc] bg-white px-3 text-sm font-medium text-[#1c1c1a] shadow-sm outline-none focus:border-[#007a33] focus:ring-2 focus:ring-[#97d700]">
+                        <option value="">Choose a set</option>
+                    </select>
+                    <input
+                        type="text"
+                        name="set_new"
+                        value="{{.Values.NewSet}}"
+                        class="mt-2 block h-11 w-full rounded-md border border-[#c7c5bc] bg-white px-3 text-sm font-medium text-[#1c1c1a] shadow-sm outline-none placeholder:text-[#828078] focus:border-[#007a33] focus:ring-2 focus:ring-[#97d700]"
+                        placeholder="Or type a new set">
+                </div>
+            </div>
+
+            <div class="mt-5">
+                <label for="title" class="mb-1 block text-sm font-bold text-[#31312e]">Title</label>
+                <input
+                    id="title"
+                    type="text"
+                    name="title"
+                    value="{{.Values.Title}}"
+                    class="block h-11 w-full rounded-md border border-[#c7c5bc] bg-white px-3 text-sm font-medium text-[#1c1c1a] shadow-sm outline-none focus:border-[#007a33] focus:ring-2 focus:ring-[#97d700]">
+            </div>
+
+            <div class="mt-5">
+                <label for="body" class="mb-1 block text-sm font-bold text-[#31312e]">Body</label>
+                <textarea
+                    id="body"
+                    name="body"
+                    rows="9"
+                    class="block w-full rounded-md border border-[#c7c5bc] bg-white px-3 py-3 text-sm font-medium leading-6 text-[#1c1c1a] shadow-sm outline-none focus:border-[#007a33] focus:ring-2 focus:ring-[#97d700]">{{.Values.Body}}</textarea>
+            </div>
+
+            <button type="submit" class="mt-6 inline-flex h-11 w-full items-center justify-center rounded-md bg-[#007a33] px-4 text-sm font-black text-white shadow-sm transition hover:bg-[#006341] focus:outline-none focus:ring-2 focus:ring-[#97d700] focus:ring-offset-2 focus:ring-offset-[#fafaf8]">
+                Save Template
+            </button>
+        </form>
+
+        <section class="rounded-lg border border-[#c7c5bc] bg-[#fafaf8] p-5 shadow-sm">
+            <div class="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+                <div>
+                    <h2 class="text-lg font-black text-[#13322b]">Current Templates</h2>
+                    <p class="mt-1 text-sm font-medium text-[#575652]">Search, copy, and remove templates</p>
+                </div>
+                <div class="lg:w-72">
+                    <label for="manage-search" class="mb-1 block text-sm font-bold text-[#31312e]">Search</label>
+                    <input
+                        id="manage-search"
+                        name="q"
+                        type="search"
+                        value="{{.SearchQuery}}"
+                        class="block h-11 w-full rounded-md border border-[#c7c5bc] bg-white px-3 text-sm font-medium text-[#1c1c1a] shadow-sm outline-none placeholder:text-[#828078] focus:border-[#007a33] focus:ring-2 focus:ring-[#97d700]"
+                        placeholder="Title, body, department"
+                        hx-get="/manage/templates"
+                        hx-target="#manage-template-list"
+                        hx-trigger="input changed delay:250ms, search"
+                        hx-swap="outerHTML">
+                </div>
+            </div>
+
+            <div class="mt-5">
+                {{template "manage_templates.html" .}}
+            </div>
+        </section>
+    </div>
+</main>
+{{end}}

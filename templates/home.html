@@ -1,48 +1,59 @@
 {{define "content"}}
-<main class="mt-5 space-y-5">
-    <section class="border border-[#d8eadf] bg-white p-6 shadow-sm">
-        <p class="text-xs font-bold uppercase tracking-[0.22em] text-[#00a651]">Aussie Broadband workspace</p>
-        <h2 class="mt-2 text-3xl font-semibold tracking-tight text-[#111827]">Welcome to {{.Title}}</h2>
-        <p class="mt-2 text-sm text-[#4b5563]">Select a department, group, and set to load templates.</p>
-    </section>
-
-    <section class="border border-[#d8eadf] bg-white p-6 shadow-sm">
-        <div>
-            <h2 class="text-base font-semibold text-[#111827]">Selection controls</h2>
-            <p class="mt-1 text-sm text-[#4b5563]">Choose your template path</p>
-        </div>
-
-        <div class="mt-6 grid gap-4 md:grid-cols-3">
-        <div>
-            <label for="department" class="mb-1 block text-sm font-semibold text-[#374151]">Department</label>
-            <select
-                id="department"
-                name="department"
-                class="block h-10 w-full border border-[#cfe6d7] bg-[#fbfefc] px-3 text-sm text-[#111827] shadow-xs outline-none focus:border-[#00a651] focus:ring-2 focus:ring-[#b7edc9]"
-                hx-get="/groups"
-                hx-target="#group-container"
-                hx-trigger="change">
-                <option value="">Choose a department</option>
-                {{range .Departments}}
-                    <option value="{{.}}">{{.}}</option>
-                {{end}}
-            </select>
-        </div>
-
-        <div id="group-container"></div>
-        <div id="set-container"></div>
+<main class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+    <section class="rounded-lg bg-[#13322b] p-6 text-[#fafaf8] shadow-lg shadow-[#13322b]/15">
+        <div class="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
+            <div>
+                <p class="text-sm font-bold text-[#97d700]">Browse</p>
+                <h1 class="mt-2 text-3xl font-black leading-tight sm:text-4xl">{{.Title}}</h1>
+                <p class="mt-3 max-w-3xl text-base text-[#e6fcd4]">Reusable team templates in one place, with room for process notes and internal knowledge as Vector grows.</p>
+            </div>
+            <a href="/manage" class="inline-flex h-11 items-center justify-center rounded-md bg-[#fde021] px-4 text-sm font-black text-[#13322b] no-underline shadow-sm transition hover:bg-[#fffed3] focus:outline-none focus:ring-2 focus:ring-[#97d700] focus:ring-offset-2 focus:ring-offset-[#13322b]">
+                Manage Templates
+            </a>
         </div>
     </section>
 
-    <section class="border border-[#d8eadf] bg-white p-6 shadow-sm">
-        <div>
-            <h2 class="text-base font-semibold text-[#111827]">Template results</h2>
-            <p class="mt-1 text-sm text-[#4b5563]">Retrieved templates will appear here</p>
-        </div>
+    <div class="mt-6 grid gap-6 lg:grid-cols-[22rem_minmax(0,1fr)]">
+        <section class="rounded-lg border border-[#c7c5bc] bg-[#fafaf8] p-5 shadow-sm">
+            <div>
+                <h2 class="text-lg font-black text-[#13322b]">Filters</h2>
+                <p class="mt-1 text-sm font-medium text-[#575652]">Department, group, and set</p>
+            </div>
 
-        <div class="mt-5">
-        <div id="templates-container"></div>
-        </div>
-    </section>
+            <div class="mt-5 space-y-4">
+                <div>
+                    <label for="department" class="mb-1 block text-sm font-bold text-[#31312e]">Department</label>
+                    <select
+                        id="department"
+                        name="department"
+                        class="block h-11 w-full rounded-md border border-[#c7c5bc] bg-white px-3 text-sm font-medium text-[#1c1c1a] shadow-sm outline-none focus:border-[#007a33] focus:ring-2 focus:ring-[#97d700]"
+                        hx-get="/groups"
+                        hx-target="#group-container"
+                        hx-trigger="change">
+                        <option value="">Choose a department</option>
+                        {{range .Departments}}
+                            <option value="{{.}}">{{.}}</option>
+                        {{end}}
+                    </select>
+                </div>
+
+                <div id="group-container"></div>
+                <div id="set-container"></div>
+            </div>
+        </section>
+
+        <section class="rounded-lg border border-[#c7c5bc] bg-[#fafaf8] p-5 shadow-sm">
+            <div>
+                <h2 class="text-lg font-black text-[#13322b]">Templates</h2>
+                <p class="mt-1 text-sm font-medium text-[#575652]">Ready-to-copy content for the selected set</p>
+            </div>
+
+            <div class="mt-5">
+                <div id="templates-container">
+                    <p class="rounded-lg border border-dashed border-[#c7c5bc] bg-[#eeece8] p-4 text-sm font-semibold text-[#575652]">No set selected.</p>
+                </div>
+            </div>
+        </section>
+    </div>
 </main>
 {{end}}

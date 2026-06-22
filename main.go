@@ -6,6 +6,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"strconv"
 	"strings"
 
 	"github.com/gorilla/mux"
@@ -19,6 +20,7 @@ type App struct {
 
 type PageData struct {
 	Title       string
+	Active      string
 	Departments []string
 }
 
@@ -41,6 +43,11 @@ type TemplatesData struct {
 	Templates []TemplateItem
 }
 
+type ManageTemplatesListData struct {
+	Templates   []TemplateItem
+	SearchQuery string
+}
+
 type TemplateForm struct {
 	Department    string
 	NewDepartment string
@@ -52,12 +59,16 @@ type TemplateForm struct {
 	Body          string
 }
 
-type NewTemplateData struct {
+type ManageTemplateData struct {
 	Title       string
+	Active      string
 	Departments []string
 	Saved       bool
+	Deleted     bool
 	Error       string
 	Values      TemplateForm
+	Templates   []TemplateItem
+	SearchQuery string
 }
 
 func NewApp() *App {
@@ -87,13 +98,19 @@ func NewApp() *App {
 
 func (app *App) routes() {
 	app.router.HandleFunc("/", app.handleHome).Methods("GET")
-	app.router.HandleFunc("/new", app.handleNewTemplate).Methods("GET")
+	app.router.HandleFunc("/manage", app.handleManageTemplates).Methods("GET")
+	app.router.HandleFunc("/manage/groups", app.handleNewGroups).Methods("GET")
+	app.router.HandleFunc("/manage/sets", app.handleNewSets).Methods("GET")
+	app.router.HandleFunc("/manage/templates", app.handleManageTemplateList).Methods("GET")
+	app.router.HandleFunc("/new", app.handleLegacyNewTemplate).Methods("GET")
 	app.router.HandleFunc("/new/groups", app.handleNewGroups).Methods("GET")
 	app.router.HandleFunc("/new/sets", app.handleNewSets).Methods("GET")
 	app.router.HandleFunc("/groups", app.handleGroups).Methods("GET")
 	app.router.HandleFunc("/sets", app.handleSets).Methods("GET")
 	app.router.HandleFunc("/templates", app.handleTemplates).Methods("GET")
 	app.router.HandleFunc("/templates", app.handleCreateTemplate).Methods("POST")
+	app.router.HandleFunc("/templates/{id:[0-9]+}", app.handleDeleteTemplate).Methods("DELETE")
+	app.router.HandleFunc("/templates/{id:[0-9]+}/delete", app.handleDeleteTemplateFallback).Methods("POST")
 }
 
 func (app *App) Run() {
@@ -111,7 +128,8 @@ func (app *App) handleHome(w http.ResponseWriter, r *http.Request) {
 	}
 
 	app.render(w, "home.html", PageData{
-		Title:       "Vector",
+		Title:       "Vector Library",
+		Active:      "browse",
 		Departments: departments,
 	})
 }
@@ -166,7 +184,11 @@ func (app *App) handleTemplates(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
-func (app *App) handleNewTemplate(w http.ResponseWriter, r *http.Request) {
+func (app *App) handleLegacyNewTemplate(w http.ResponseWriter, r *http.Request) {
+	http.Redirect(w, r, "/manage", http.StatusSeeOther)
+}
+
+func (app *App) handleManageTemplates(w http.ResponseWriter, r *http.Request) {
 	departments, err := app.listDepartments()
 	if err != nil {
 		http.Error(w, "Could not load departments", http.StatusInternalServerError)
@@ -174,10 +196,38 @@ func (app *App) handleNewTemplate(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	app.render(w, "new.html", NewTemplateData{
-		Title:       "Add Template",
+	searchQuery := strings.TrimSpace(r.URL.Query().Get("q"))
+	templates, err := app.listManagedTemplates(searchQuery)
+	if err != nil {
+		http.Error(w, "Could not load templates", http.StatusInternalServerError)
+		log.Println("load managed templates:", err)
+		return
+	}
+
+	app.render(w, "manage.html", ManageTemplateData{
+		Title:       "Manage Templates",
+		Active:      "manage",
 		Departments: departments,
 		Saved:       r.URL.Query().Get("saved") == "1",
+		Deleted:     r.URL.Query().Get("deleted") == "1",
+		Templates:   templates,
+		SearchQuery: searchQuery,
+	})
+}
+
+func (app *App) handleManageTemplateList(w http.ResponseWriter, r *http.Request) {
+	searchQuery := strings.TrimSpace(r.URL.Query().Get("q"))
+
+	templates, err := app.listManagedTemplates(searchQuery)
+	if err != nil {
+		http.Error(w, "Could not load templates", http.StatusInternalServerError)
+		log.Println("load managed templates:", err)
+		return
+	}
+
+	app.renderPartial(w, "manage_templates.html", ManageTemplatesListData{
+		Templates:   templates,
+		SearchQuery: searchQuery,
 	})
 }
 
@@ -248,7 +298,50 @@ func (app *App) handleCreateTemplate(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	http.Redirect(w, r, "/new?saved=1", http.StatusSeeOther)
+	http.Redirect(w, r, "/manage?saved=1", http.StatusSeeOther)
+}
+
+func (app *App) handleDeleteTemplate(w http.ResponseWriter, r *http.Request) {
+	id, err := templateID(r)
+	if err != nil {
+		http.Error(w, "Invalid template id", http.StatusBadRequest)
+		return
+	}
+
+	if err := app.deleteTemplate(id); err != nil {
+		http.Error(w, "Could not delete template", http.StatusInternalServerError)
+		log.Println("delete template:", err)
+		return
+	}
+
+	searchQuery := strings.TrimSpace(r.URL.Query().Get("q"))
+	templates, err := app.listManagedTemplates(searchQuery)
+	if err != nil {
+		http.Error(w, "Could not load templates", http.StatusInternalServerError)
+		log.Println("load managed templates:", err)
+		return
+	}
+
+	app.renderPartial(w, "manage_templates.html", ManageTemplatesListData{
+		Templates:   templates,
+		SearchQuery: searchQuery,
+	})
+}
+
+func (app *App) handleDeleteTemplateFallback(w http.ResponseWriter, r *http.Request) {
+	id, err := templateID(r)
+	if err != nil {
+		http.Error(w, "Invalid template id", http.StatusBadRequest)
+		return
+	}
+
+	if err := app.deleteTemplate(id); err != nil {
+		http.Error(w, "Could not delete template", http.StatusInternalServerError)
+		log.Println("delete template:", err)
+		return
+	}
+
+	http.Redirect(w, r, "/manage?deleted=1", http.StatusSeeOther)
 }
 
 // Rendering htmx content
@@ -256,6 +349,7 @@ func (app *App) render(w http.ResponseWriter, page string, data any) {
 	files := []string{
 		"templates/index.html",
 		"templates/" + page,
+		"templates/partials/manage_templates.html",
 	}
 
 	views, err := template.ParseFiles(files...)
@@ -311,12 +405,21 @@ func (app *App) renderNewTemplateError(w http.ResponseWriter, values TemplateFor
 		return
 	}
 
+	templates, err := app.listManagedTemplates("")
+	if err != nil {
+		http.Error(w, "Could not load templates", http.StatusInternalServerError)
+		log.Println("load managed templates:", err)
+		return
+	}
+
 	w.WriteHeader(http.StatusBadRequest)
-	app.render(w, "new.html", NewTemplateData{
-		Title:       "Add Template",
+	app.render(w, "manage.html", ManageTemplateData{
+		Title:       "Manage Templates",
+		Active:      "manage",
 		Departments: departments,
 		Error:       message,
 		Values:      values,
+		Templates:   templates,
 	})
 }
 
@@ -415,11 +518,63 @@ func (app *App) listTemplates(department string, group string, set string) ([]Te
 	return templates, rows.Err()
 }
 
+func (app *App) listManagedTemplates(searchQuery string) ([]TemplateItem, error) {
+	searchQuery = strings.TrimSpace(searchQuery)
+
+	var (
+		rows *sql.Rows
+		err  error
+	)
+
+	if searchQuery == "" {
+		rows, err = app.db.Query(`
+			SELECT id, department, group_name, set_name, title, body
+			FROM templates
+			ORDER BY department, group_name, set_name, title;
+		`)
+	} else {
+		likeQuery := "%" + searchQuery + "%"
+		rows, err = app.db.Query(`
+			SELECT id, department, group_name, set_name, title, body
+			FROM templates
+			WHERE department LIKE ?
+				OR group_name LIKE ?
+				OR set_name LIKE ?
+				OR title LIKE ?
+				OR body LIKE ?
+			ORDER BY department, group_name, set_name, title;
+		`, likeQuery, likeQuery, likeQuery, likeQuery, likeQuery)
+	}
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var templates []TemplateItem
+	for rows.Next() {
+		var item TemplateItem
+		if err := rows.Scan(&item.ID, &item.Department, &item.Group, &item.Set, &item.Title, &item.Body); err != nil {
+			return nil, err
+		}
+		templates = append(templates, item)
+	}
+
+	return templates, rows.Err()
+}
+
 func (app *App) createTemplate(department string, group string, set string, title string, body string) error {
 	_, err := app.db.Exec(`
 		INSERT INTO templates (department, group_name, set_name, title, body)
 		VALUES (?, ?, ?, ?, ?);
 	`, department, group, set, title, body)
+	return err
+}
+
+func (app *App) deleteTemplate(id int) error {
+	_, err := app.db.Exec(`
+		DELETE FROM templates
+		WHERE id = ?;
+	`, id)
 	return err
 }
 
@@ -430,6 +585,10 @@ func pickValue(existing string, newValue string) string {
 	}
 
 	return strings.TrimSpace(existing)
+}
+
+func templateID(r *http.Request) (int, error) {
+	return strconv.Atoi(mux.Vars(r)["id"])
 }
 
 func main() {
