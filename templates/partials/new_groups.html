@@ -1,9 +1,9 @@
 {{define "new_groups.html"}}
-<label for="group" class="mb-1 block text-sm font-bold text-[#31312e]">Group</label>
+<label for="group" class="mb-1 block text-sm font-medium text-[#31312e]">Group</label>
 <select
     id="group"
     name="group"
-    class="block h-11 w-full rounded-md border border-[#c7c5bc] bg-white px-3 text-sm font-medium text-[#1c1c1a] shadow-sm outline-none focus:border-[#007a33] focus:ring-2 focus:ring-[#97d700]"
+    class="block h-11 w-full rounded-xl border border-[#c7c5bc] bg-white px-3 text-sm text-[#1c1c1a] shadow-sm outline-none focus:border-[#007a33] focus:ring-2 focus:ring-[#97d700]"
     hx-get="/manage/sets"
     hx-target="#new-set-container"
     hx-trigger="change"
@@ -16,18 +16,18 @@
 <input
     type="text"
     name="group_new"
-    class="mt-2 block h-11 w-full rounded-md border border-[#c7c5bc] bg-white px-3 text-sm font-medium text-[#1c1c1a] shadow-sm outline-none placeholder:text-[#828078] focus:border-[#007a33] focus:ring-2 focus:ring-[#97d700]"
+    class="mt-2 block h-11 w-full rounded-xl border border-[#c7c5bc] bg-white px-3 text-sm text-[#1c1c1a] shadow-sm outline-none placeholder:text-[#828078] focus:border-[#007a33] focus:ring-2 focus:ring-[#97d700]"
     placeholder="Or type a new group">
 
 <div id="new-set-container" hx-swap-oob="true">
-    <label for="set" class="mb-1 block text-sm font-bold text-[#31312e]">Set</label>
-    <select id="set" name="set" class="block h-11 w-full rounded-md border border-[#c7c5bc] bg-white px-3 text-sm font-medium text-[#1c1c1a] shadow-sm outline-none focus:border-[#007a33] focus:ring-2 focus:ring-[#97d700]">
+    <label for="set" class="mb-1 block text-sm font-medium text-[#31312e]">Set</label>
+    <select id="set" name="set" class="block h-11 w-full rounded-xl border border-[#c7c5bc] bg-white px-3 text-sm text-[#1c1c1a] shadow-sm outline-none focus:border-[#007a33] focus:ring-2 focus:ring-[#97d700]">
         <option value="">Choose a set</option>
     </select>
     <input
         type="text"
         name="set_new"
-        class="mt-2 block h-11 w-full rounded-md border border-[#c7c5bc] bg-white px-3 text-sm font-medium text-[#1c1c1a] shadow-sm outline-none placeholder:text-[#828078] focus:border-[#007a33] focus:ring-2 focus:ring-[#97d700]"
+        class="mt-2 block h-11 w-full rounded-xl border border-[#c7c5bc] bg-white px-3 text-sm text-[#1c1c1a] shadow-sm outline-none placeholder:text-[#828078] focus:border-[#007a33] focus:ring-2 focus:ring-[#97d700]"
         placeholder="Or type a new set">
 </div>
 {{end}}

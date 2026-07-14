@@ -4,39 +4,66 @@
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="theme-color" content="#fafaf8">
 	<script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
 	<script src="https://cdn.jsdelivr.net/npm/htmx.org@2.0.4/dist/htmx.min.js"></script>
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+	<style>
+		body { font-family: 'Poppins', ui-sans-serif, system-ui, sans-serif; }
+	</style>
 
 	<title>{{.Title}} | Vector</title>
 </head>
-<body class="min-h-screen bg-[#eeece8] text-[#1c1c1a] antialiased">
+<body class="min-h-screen bg-[#fafaf8] text-[#41403c] antialiased">
 	<div class="min-h-screen">
-		<header class="bg-[#13322b] text-[#fafaf8] shadow-lg shadow-[#13322b]/20">
-			<div class="mx-auto flex max-w-7xl flex-col gap-5 px-4 py-5 sm:px-6 lg:flex-row lg:items-center lg:justify-between lg:px-8">
+		<header class="border-b border-[#e0ddd7] bg-[#fafaf8]">
+			<div class="mx-auto flex max-w-7xl flex-col gap-5 px-4 py-4 sm:px-6 lg:flex-row lg:items-center lg:justify-between lg:px-8">
 				<a href="/" class="flex items-center gap-3 no-underline">
-					<span class="grid h-12 w-12 place-items-center rounded-lg bg-[#97d700] text-[#13322b] shadow-md shadow-black/20">
+					<span class="grid h-12 w-12 place-items-center rounded-2xl bg-[#97d700] text-[#13322b]">
 						<svg aria-hidden="true" viewBox="0 0 48 48" class="h-8 w-8">
 							<path fill="currentColor" d="M8 8h32v32H8z"></path>
 							<path fill="#fafaf8" d="M15 14h5l4 18 4-18h5l-6 20h-6z"></path>
-							<path fill="#fde021" d="M34 14h4v20h-4z"></path>
+							<path fill="#97d700" d="M34 14h4v20h-4z"></path>
 						</svg>
 					</span>
 					<span>
-						<span class="block text-xl font-black leading-tight">Vector</span>
-						<span class="block text-sm font-semibold text-[#bae892]">Internal knowledge hub</span>
+						<span class="block text-xl font-semibold leading-tight text-[#13322b]">Vector</span>
+						<span class="block text-sm font-medium text-[#575652]">Internal knowledge hub</span>
 					</span>
 				</a>
 
-				<nav aria-label="Primary navigation" class="flex flex-wrap gap-2">
-					<a href="/" class="rounded-md px-4 py-2 text-sm font-bold no-underline transition {{if eq .Active "browse"}}bg-[#97d700] text-[#13322b] shadow-sm{{else}}text-[#fafaf8] hover:bg-[#034638] hover:text-[#fde021]{{end}}">
-						Browse
-					</a>
-					<a href="/manage" class="rounded-md px-4 py-2 text-sm font-bold no-underline transition {{if eq .Active "manage"}}bg-[#97d700] text-[#13322b] shadow-sm{{else}}text-[#fafaf8] hover:bg-[#034638] hover:text-[#fde021]{{end}}">
-						Manage Templates
-					</a>
+				<nav aria-label="Primary navigation" class="flex flex-wrap items-center gap-2">
+					{{if .User}}
+						<a href="/" class="rounded-full px-4 py-2 text-sm font-semibold no-underline transition {{if eq .Active "browse"}}bg-[#007a33] text-white shadow-sm{{else}}text-[#13322b] hover:bg-[#eeece8]{{end}}">
+							Browse
+						</a>
+						{{if eq .User.Role "admin"}}
+						<a href="/manage" class="rounded-full px-4 py-2 text-sm font-semibold no-underline transition {{if eq .Active "manage"}}bg-[#007a33] text-white shadow-sm{{else}}text-[#13322b] hover:bg-[#eeece8]{{end}}">
+							Manage Templates
+						</a>
+						{{end}}
+						{{if eq .User.Role "admin"}}
+							<a href="/admin" class="rounded-full px-4 py-2 text-sm font-semibold no-underline transition {{if eq .Active "admin"}}bg-[#007a33] text-white shadow-sm{{else}}text-[#13322b] hover:bg-[#eeece8]{{end}}">
+								Admin
+							</a>
+						{{end}}
+						<form hx-post="/logout" class="ml-2">
+							<button class="rounded-full bg-[#eeece8] px-4 py-2 text-sm font-semibold text-[#41403c] shadow-sm transition hover:bg-[#e0ddd7]">
+								Log out ({{.User.Email}})
+							</button>
+						</form>
+					{{else}}
+						<a href="/login" class="rounded-full px-4 py-2 text-sm font-semibold no-underline transition {{if eq .Active "login"}}bg-[#007a33] text-white shadow-sm{{else}}bg-[#eeece8] text-[#41403c] shadow-sm hover:bg-[#e0ddd7]{{end}}">
+							Log in
+						</a>
+						<a href="/signup" class="rounded-full px-4 py-2 text-sm font-semibold no-underline shadow-sm transition {{if eq .Active "signup"}}bg-[#007a33] text-white{{else}}bg-[#007a33] text-white hover:bg-[#006341]{{end}}">
+							Sign up
+						</a>
+					{{end}}
 				</nav>
 			</div>
-			<div class="h-1 bg-[#97d700]"></div>
 		</header>
 
 		{{template "content" .}}

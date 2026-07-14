@@ -1,0 +1,39 @@
+{{define "content"}}
+<main class="mx-auto max-w-md px-4 py-12 sm:px-6">
+    <section class="rounded-2xl border border-[#e0ddd7] bg-white p-6 shadow-sm">
+        <h1 class="text-2xl font-semibold text-[#1c1c1a]">Log in</h1>
+        <p class="mt-1 text-sm font-light text-[#575652]">Sign in to browse and manage templates.</p>
+
+        <form hx-post="/login" hx-target="#form-error" class="mt-6 space-y-4">
+            <div>
+                <label for="email" class="mb-1 block text-sm font-medium text-[#31312e]">Email</label>
+                <input
+                    type="email"
+                    id="email"
+                    name="email"
+                    required
+                    class="block h-11 w-full rounded-xl border border-[#c7c5bc] bg-white px-3 text-sm text-[#1c1c1a] shadow-sm outline-none focus:border-[#007a33] focus:ring-2 focus:ring-[#97d700]">
+            </div>
+            <div>
+                <label for="password" class="mb-1 block text-sm font-medium text-[#31312e]">Password</label>
+                <input
+                    type="password"
+                    id="password"
+                    name="password"
+                    required
+                    class="block h-11 w-full rounded-xl border border-[#c7c5bc] bg-white px-3 text-sm text-[#1c1c1a] shadow-sm outline-none focus:border-[#007a33] focus:ring-2 focus:ring-[#97d700]">
+            </div>
+            <button class="inline-flex h-11 w-full items-center justify-center rounded-full bg-[#007a33] px-6 text-sm font-semibold text-white shadow-sm transition hover:bg-[#006341] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#007a33] focus-visible:ring-offset-2 focus-visible:ring-offset-white">
+                Log in
+            </button>
+        </form>
+
+        <div id="form-error"></div>
+
+        <p class="mt-6 text-sm font-light text-[#575652]">
+            New here?
+            <a href="/signup" class="font-semibold text-[#007a33] hover:text-[#006341]">Sign up</a>
+        </p>
+    </section>
+</main>
+{{end}}

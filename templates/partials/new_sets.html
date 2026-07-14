@@ -1,6 +1,6 @@
 {{define "new_sets.html"}}
-<label for="set" class="mb-1 block text-sm font-bold text-[#31312e]">Set</label>
-<select id="set" name="set" class="block h-11 w-full rounded-md border border-[#c7c5bc] bg-white px-3 text-sm font-medium text-[#1c1c1a] shadow-sm outline-none focus:border-[#007a33] focus:ring-2 focus:ring-[#97d700]">
+<label for="set" class="mb-1 block text-sm font-medium text-[#31312e]">Set</label>
+<select id="set" name="set" class="block h-11 w-full rounded-xl border border-[#c7c5bc] bg-white px-3 text-sm text-[#1c1c1a] shadow-sm outline-none focus:border-[#007a33] focus:ring-2 focus:ring-[#97d700]">
     <option value="">Choose a set</option>
     {{range .Sets}}
         <option value="{{.}}">{{.}}</option>
@@ -9,6 +9,6 @@
 <input
     type="text"
     name="set_new"
-    class="mt-2 block h-11 w-full rounded-md border border-[#c7c5bc] bg-white px-3 text-sm font-medium text-[#1c1c1a] shadow-sm outline-none placeholder:text-[#828078] focus:border-[#007a33] focus:ring-2 focus:ring-[#97d700]"
+    class="mt-2 block h-11 w-full rounded-xl border border-[#c7c5bc] bg-white px-3 text-sm text-[#1c1c1a] shadow-sm outline-none placeholder:text-[#828078] focus:border-[#007a33] focus:ring-2 focus:ring-[#97d700]"
     placeholder="Or type a new set">
 {{end}}
